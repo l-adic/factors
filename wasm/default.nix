@@ -15,9 +15,5 @@ let
 in
 
 {
-  shell = npmlock2nix.shell (common-npmlock2nix // {
-    buildInputs = [
-    ] ++ ghcWasmDeps;
-  });
-  ghcWasmShell = pkgs.mkShell { packages = [ ghcWasmDeps ]; };
+  shell = pkgs.mkShell { packages = [ ghcWasmDeps ]; };
 }

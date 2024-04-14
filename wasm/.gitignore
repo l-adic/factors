@@ -1,6 +1,1 @@
-ormolu.wasm
-.purs-repl
-.spago/
-output
-node-modules
-
+dist-newstyle

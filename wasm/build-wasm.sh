@@ -3,17 +3,17 @@ set -e
 WDIR="$(mktemp -d)"
 trap 'rm -rf -- "$WDIR"' EXIT
 
-wasm32-wasi-cabal build exe:ormolu-live --minimize-conflict-set
-wasm32-wasi-cabal list-bin exe:ormolu-live
-ORMOLU_WASM="$(wasm32-wasi-cabal list-bin exe:ormolu-live)"
+wasm32-wasi-cabal build exe:factors-solver --minimize-conflict-set
+wasm32-wasi-cabal list-bin exe:factors-solver
+FACTORS_WASM="$(wasm32-wasi-cabal list-bin exe:factors-solver)"
 wizer \
     --allow-wasi --wasm-bulk-memory true \
-    "$ORMOLU_WASM" -o "$WDIR/ormolu-init.wasm" \
+    "$FACTORS_WASM" -o "$WDIR/factors-init.wasm" \
 #    --mapdir /::./extract-hackage-info
 if [ $# -eq 0 ]; then
-    ORMOLU_WASM_OPT="$WDIR/ormolu-init.wasm"
+    FACTORS_WASM_OPT="$WDIR/factors-init.wasm"
 else
-    ORMOLU_WASM_OPT="$WDIR/ormolu-opt.wasm"
-    wasm-opt "$@" "$WDIR/ormolu-init.wasm" -o "$ORMOLU_WASM_OPT"
+    FACTORS_WASM_OPT="$WDIR/factors-opt.wasm"
+    wasm-opt "$@" "$WDIR/factors-init.wasm" -o "$FACTORS_WASM_OPT"
 fi
-cp "$ORMOLU_WASM_OPT" src/ormolu.wasm
+cp "$FACTORS_WASM_OPT" ../factors-output/factors.wasm

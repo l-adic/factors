@@ -1,16 +1,17 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
-
 module Main where
 
+import Data.Binary (encode)
+import Data.Binary.Get (runGet)
 import Data.ByteString.Lazy qualified as BL
 import Data.ByteString.Unsafe qualified as BU
+import Data.Map qualified as Map
+import Data.String (String)
 import Foreign hiding (void)
 import Foreign.C.Types
-import ZK.Factors (Fr, solver)
-import R1CS.Circom
-import qualified Data.Map as Map
+import Protolude
+import R1CS (Inputs (..), Witness)
+import R1CS.Circom (FieldSize (..), getInputs, witnessToCircomWitness)
+import ZK.Factors (FactorsCircuit (..), Fr, factorsCircuit, solver)
 
 main :: IO ()
 main = mempty
@@ -26,29 +27,29 @@ foreign export ccall calculateWitnessRaw :: Ptr CChar -> Int -> Ptr (Ptr CChar) 
 
 calculateWitnessRaw :: Ptr CChar -> Int -> Ptr (Ptr CChar) -> IO Int
 calculateWitnessRaw inputPtr inputLen outputPtrPtr = do
-  Just input <-
-    A.decodeStrict <$> BU.unsafePackMallocCStringLen (inputPtr, inputLen)
-  let outputBytes = BL.toStrict $ A.encode $ calculateWitness input
+  inputs <-
+    runGet (getInputs (FieldSize 32) nInputs) . BL.fromStrict <$> BU.unsafePackMallocCStringLen (inputPtr, inputLen)
+  let outputBytes =
+        BL.toStrict $ encode $ witnessToCircomWitness $ calculateWitness inputs
   BU.unsafeUseAsCStringLen outputBytes \(buf, len) -> do
-    putStrLn "Holy shit I'm printing this from inside a haskell program compiled to wasm"
+    putStrLn ("Holy shit I'm printing this from inside a haskell program compiled to wasm" :: String)
     outputPtr <- mallocBytes len
     poke outputPtrPtr outputPtr
     copyBytes outputPtr buf len
     pure len
+  where
+    -- the factors program has 1 public input and 2 private inputs
+    nInputs :: Int
+    nInputs = 3
 
-data Input = Input
-  { publicInput :: FieldElem F_BN128,
-    factor1 :: FieldElem F_BN128,
-    factor2 :: FieldElem F_BN128
-  }
-
-instance A.FromJSON Input where
-  parseJSON = A.withObject "Input" $ \o -> do
-    n <- o A..: "publicInput"
-    a <- o A..: "factor1"
-    b <- o A..: "factor2"
-    pure $ Input n a b
-
-calculateWitness :: Input -> Result F_BN128
-calculateWitness Input {..} =
-  solve (unFieldElem publicInput) (unFieldElem factor1, unFieldElem factor2)
+calculateWitness :: Inputs Fr -> Witness Fr
+calculateWitness (Inputs inputs) =
+  let FactorsCircuit {..} = factorsCircuit @Fr
+      n =
+        fromMaybe (panic "no private input") $
+          Map.lookup fcPublicInput inputs
+      (a, b) = fromMaybe (panic "no public inputs") $ do
+        case fcPrivateInputs of
+          [i1, i2] -> (,) <$> Map.lookup i1 inputs <*> Map.lookup i2 inputs
+          _ -> Nothing
+   in solver n (a, b)
