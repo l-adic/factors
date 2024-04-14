@@ -1,0 +1,58 @@
+cabal-version: 3.0
+name:          factors
+version:       0.1.0.0
+author:        martyall
+maintainer:    martyall@protonmail.com
+build-type:    Simple
+
+common warnings
+  ghc-options: -Wall
+
+common extensions
+  default-extensions:
+    DataKinds
+    TypeApplications
+    NoImplicitPrelude
+    RecordWildCards
+    OverloadedStrings
+
+common deps
+  build-depends:
+      protolude
+    , arithmetic-circuits
+    , base
+    , containers
+    , galois-field
+    , propagators
+
+library
+  import:           warnings, extensions, deps
+  exposed-modules:  ZK.Factors
+  other-modules:
+    ZK.Factors.Circuit
+    ZK.Factors.Witness
+
+  hs-source-dirs:   src
+  default-language: GHC2021
+
+executable factors
+  import:           warnings, extensions, deps
+  main-is:          Main.hs
+  build-depends:
+    , arithmetic-circuits:circom-compat
+    , binary
+    , factors
+
+  hs-source-dirs:   app
+  default-language: GHC2021
+
+test-suite factors-test
+  import:           warnings, extensions, deps
+  default-language: Haskell2010
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   test
+  main-is:          Main.hs
+  build-depends:
+    , factors
+    , hspec
+    , QuickCheck

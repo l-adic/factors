@@ -1,0 +1,20 @@
+cabal-version: 3.0
+name:          factors-solver
+version:       0.0.0.0
+
+executable factors-solver
+  main-is:          Main.hs
+  c-sources:        cbits/init.c
+  hs-source-dirs:   app
+  default-language: GHC2021
+  ghc-options:
+    -Wall -Wunused-packages -no-hs-main -optl-mexec-model=reactor
+    "-optl-Wl,--export=malloc,--export=mallocPtr,--export=free,--export=calculateWitnessRaw"
+
+  build-depends:
+    , arithmetic-circuits:circom-compat
+    , base
+    , binary
+    , bytestring
+    , containers
+    , factors
