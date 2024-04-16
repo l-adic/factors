@@ -1,5 +1,6 @@
 module Main where
 
+import Data.String
 import Data.Field.Galois (char, fromP)
 import Data.IORef (IORef, newIORef, readIORef, writeIORef)
 import Data.Map qualified as Map
@@ -9,50 +10,22 @@ import Data.Vector.Mutable qualified as MV
 import Foreign hiding (void)
 import Protolude
 import R1CS (Inputs (..), Witness (..))
+import Circuit (relabel, CircuitVars(..))
 import R1CS.Circom (FieldSize (..), integerFromLittleEndian, integerToLittleEndian, n32)
 import System.IO.Unsafe (unsafePerformIO)
 import ZK.Factors (FactorsCircuit (..), Fr, factorsCircuit, solver)
+import FNV (FNVHash(..), hashText, mkFNV)
 
 main :: IO ()
 main = mempty
 
--- marshalling
-
--- foreign export ccall mallocPtr :: IO (Ptr (Ptr a))
---
--- mallocPtr :: IO (Ptr (Ptr a))
--- mallocPtr = malloc
---
--- foreign export ccall calculateWitnessRaw :: Ptr CChar -> Int -> Ptr (Ptr CChar) -> IO Int
---
--- calculateWitnessRaw :: Ptr CChar -> Int -> Ptr (Ptr CChar) -> IO Int
--- calculateWitnessRaw inputPtr inputLen outputPtrPtr = do
---  inputs <-
---    runGet (getInputs (FieldSize 32) nInputs) . BL.fromStrict <$> BU.unsafePackMallocCStringLen (inputPtr, inputLen)
---  let outputBytes =
---        BL.toStrict $ encode $ witnessToCircomWitness $ calculateWitness inputs
---  BU.unsafeUseAsCStringLen outputBytes \(buf, len) -> do
---    putStrLn ("Holy shit I'm printing this from inside a haskell program compiled to wasm" :: String)
---    outputPtr <- mallocBytes len
---    poke outputPtrPtr outputPtr
---    copyBytes outputPtr buf len
---    pure len
---  where
---    -- the factors program has 1 public input and 2 private inputs
---    nInputs :: Int
---    nInputs = 3
-
 calculateWitness :: Inputs Fr -> Witness Fr
 calculateWitness (Inputs inputs) =
   let FactorsCircuit {..} = factorsCircuit @Fr
-      n =
-        fromMaybe (panic "no private input") $
-          Map.lookup fcPublicInput inputs
-      (a, b) = fromMaybe (panic "no public inputs") $ do
-        case fcPrivateInputs of
-          [i1, i2] -> (,) <$> Map.lookup i1 inputs <*> Map.lookup i2 inputs
-          _ -> Nothing
-   in solver n (a, b)
+      n = fromMaybe (panic "missing public input") $ Map.lookup fcPublicInput inputs
+      (a,b) = fromMaybe (panic "missing private inputs") $ 
+        (,) <$> Map.lookup (fst fcPrivateInputs) inputs <*> Map.lookup (snd fcPrivateInputs) inputs
+   in solver n (a,b)
 
 {-
   init
@@ -82,22 +55,24 @@ data ProgramState f
     psInputsSize :: Int,
     psInputs :: IORef (Inputs f),
     psWitnessSize :: Int,
-    psWitness :: IORef (Witness f)
+    psWitness :: IORef (Witness f),
+    psInputsLabels :: Map FNVHash Int
+
   }
 
 stateRef :: IORef (Maybe (ProgramState Fr))
 stateRef = unsafePerformIO $ newIORef Nothing
 {-# NOINLINE stateRef #-}
 
-foreign export ccall init :: IO ()
+foreign export ccall init :: Int -> IO ()
 
-init :: IO ()
-init = do
+init :: Int -> IO ()
+init _ = do
   let fieldSize = FieldSize 32
   sharedRWMemory <- MV.replicate (n32 fieldSize) 0
   let inputsSize = 3
   inputs <- newIORef (Inputs mempty)
-  let witnessSize = fcNumVars $ factorsCircuit @Fr
+  let witnessSize = 1 + fcNumVars (factorsCircuit @Fr)
   wtns <- newIORef (Witness mempty)
   let st =
         ProgramState
@@ -107,7 +82,8 @@ init = do
             psInputsSize = inputsSize,
             psInputs = inputs,
             psWitnessSize = witnessSize,
-            psWitness = wtns
+            psWitness = wtns,
+            psInputsLabels = cvInputsLabels $ relabel hashText $ fcVars $ factorsCircuit @Fr
           }
   writeIORef stateRef (Just st)
 
@@ -120,14 +96,14 @@ getNVars = onlyWhenInitialized $ \st ->
 foreign export ccall getVersion :: IO Int
 
 getVersion :: IO Int
-getVersion = pure 1
+getVersion = pure 2
 
 foreign export ccall getRawPrime :: IO ()
 
 getRawPrime :: IO ()
 getRawPrime = onlyWhenInitialized $ \ProgramState {psFieldSize, psRawPrime} ->
   let chunks = integerToLittleEndian psFieldSize psRawPrime
-   in forM_ [0 .. n32 psFieldSize] \i -> writeSharedRWMemory i (chunks V.! i)
+   in forM_ [0 .. n32 psFieldSize - 1] \i -> writeSharedRWMemory i (chunks V.! i)
 
 foreign export ccall writeSharedRWMemory :: Int -> Word32 -> IO ()
 
@@ -149,16 +125,22 @@ getFieldNumLen32 = onlyWhenInitialized $ \st ->
 
 foreign export ccall setInputSignal :: Word32 -> Word32 -> Int -> IO ()
 
+-- we ignore the last arugment because our signals don't have indices, only names
 setInputSignal :: Word32 -> Word32 -> Int -> IO ()
-setInputSignal _ _ i = onlyWhenInitialized $ \st -> do
+setInputSignal msb lsb _ = onlyWhenInitialized $ \st -> do
   Inputs inputs <- readIORef $ psInputs st
   v <- V.generateM (n32 $ psFieldSize st) \j ->
     MV.read (psSharedRWMemory st) j
-  let input = fromInteger @Fr . integerFromLittleEndian $ v
-  writeIORef (psInputs st) $ Inputs $ Map.insert i input inputs
-  when (Map.size inputs == psInputsSize st) $ do
-    let wtns = calculateWitness $ Inputs inputs
-    writeIORef (psWitness st) wtns
+  let h = mkFNV msb lsb
+      i = fromMaybe (panic $ "Hash not found: " <> show h) $ Map.lookup h (psInputsLabels st)
+      input = fromInteger @Fr . integerFromLittleEndian $ v
+  putStrLn @String $ "Haskell.putSignal " <> show (i, input)
+  let inputs' = Map.insert i input inputs
+  writeIORef (psInputs st) (Inputs inputs')
+  when (Map.size inputs' == psInputsSize st) $ do
+    putStrLn @String "Kicking off witness calculator"
+    let Witness wtns = calculateWitness (Inputs inputs')
+    writeIORef (psWitness st) $ Witness (Map.insert 0 1 wtns)
 
 foreign export ccall getWitnessSize :: IO Int
 
@@ -172,8 +154,9 @@ getWitness :: Int -> IO ()
 getWitness i = onlyWhenInitialized $ \st -> do
   Witness wtns <- readIORef $ psWitness st
   let wtn = maybe (panic $ "missing witness " <> show i) fromP $ Map.lookup i wtns
+  putStrLn @String $ "Haskell.witness " <> show (i, wtn)
   let chunks = integerToLittleEndian (psFieldSize st) $ fromInteger wtn
-  forM_ [0 .. n32 (psFieldSize st)] \j ->
+  forM_ [0 .. n32 (psFieldSize st) - 1] \j ->
     writeSharedRWMemory j (chunks V.! j)
 
 --------------------------------------------------------------------------------

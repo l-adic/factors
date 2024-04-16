@@ -18,7 +18,10 @@ solver ::
 solver n (a, b) =
   let FactorsCircuit {..} = factorsCircuit
       publicInputs = Map.singleton fcPublicInput n
-      privateInputs = Map.fromList $ zip fcPrivateInputs [a, b]
+      privateInputs = Map.fromList 
+        [ (fst fcPrivateInputs, a)
+        , (snd fcPrivateInputs, b)
+        ]
       inputs = publicInputs <> privateInputs
       w = solve inputs fcCircuit
    in Witness w
