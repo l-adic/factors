@@ -1,6 +1,5 @@
 module Main where
 
-import Data.String
 import Data.Field.Galois (char, fromP)
 import Data.IORef (IORef, newIORef, readIORef, writeIORef)
 import Data.Map qualified as Map
@@ -57,35 +56,41 @@ data ProgramState f
     psWitnessSize :: Int,
     psWitness :: IORef (Witness f),
     psInputsLabels :: Map FNVHash Int
-
   }
 
-stateRef :: IORef (Maybe (ProgramState Fr))
-stateRef = unsafePerformIO $ newIORef Nothing
-{-# NOINLINE stateRef #-}
-
-foreign export ccall init :: Int -> IO ()
-
-init :: Int -> IO ()
-init _ = do
+initialize :: IO (ProgramState Fr)
+initialize = do
   let fieldSize = FieldSize 32
   sharedRWMemory <- MV.replicate (n32 fieldSize) 0
   let inputsSize = 3
   inputs <- newIORef (Inputs mempty)
   let witnessSize = 1 + fcNumVars (factorsCircuit @Fr)
   wtns <- newIORef (Witness mempty)
-  let st =
-        ProgramState
-          { psSharedRWMemory = sharedRWMemory,
-            psFieldSize = fieldSize,
-            psRawPrime = toInteger $ char (1 :: Fr),
-            psInputsSize = inputsSize,
-            psInputs = inputs,
-            psWitnessSize = witnessSize,
-            psWitness = wtns,
-            psInputsLabels = cvInputsLabels $ relabel hashText $ fcVars $ factorsCircuit @Fr
-          }
-  writeIORef stateRef (Just st)
+  pure $
+    ProgramState
+      { psSharedRWMemory = sharedRWMemory,
+        psFieldSize = fieldSize,
+        psRawPrime = toInteger $ char (1 :: Fr),
+        psInputsSize = inputsSize,
+        psInputs = inputs,
+        psWitnessSize = witnessSize,
+        psWitness = wtns,
+        psInputsLabels = cvInputsLabels $ relabel hashText $ fcVars $ factorsCircuit @Fr
+      }
+
+stateRef :: IORef (ProgramState Fr)
+stateRef = unsafePerformIO $ do 
+  ps <- initialize 
+  newIORef ps
+{-# NOINLINE stateRef #-}
+
+--------------------------------------------------------------------------------
+
+foreign export ccall init :: Int -> IO ()
+
+init :: Int -> IO ()
+init _ = pure ()
+
 
 foreign export ccall getNVars :: IO Int
 
@@ -134,11 +139,9 @@ setInputSignal msb lsb _ = onlyWhenInitialized $ \st -> do
   let h = mkFNV msb lsb
       i = fromMaybe (panic $ "Hash not found: " <> show h) $ Map.lookup h (psInputsLabels st)
       input = fromInteger @Fr . integerFromLittleEndian $ v
-  putStrLn @String $ "Haskell.putSignal " <> show (i, input)
   let inputs' = Map.insert i input inputs
   writeIORef (psInputs st) (Inputs inputs')
   when (Map.size inputs' == psInputsSize st) $ do
-    putStrLn @String "Kicking off witness calculator"
     let Witness wtns = calculateWitness (Inputs inputs')
     writeIORef (psWitness st) $ Witness (Map.insert 0 1 wtns)
 
@@ -154,7 +157,6 @@ getWitness :: Int -> IO ()
 getWitness i = onlyWhenInitialized $ \st -> do
   Witness wtns <- readIORef $ psWitness st
   let wtn = maybe (panic $ "missing witness " <> show i) fromP $ Map.lookup i wtns
-  putStrLn @String $ "Haskell.witness " <> show (i, wtn)
   let chunks = integerToLittleEndian (psFieldSize st) $ fromInteger wtn
   forM_ [0 .. n32 (psFieldSize st) - 1] \j ->
     writeSharedRWMemory j (chunks V.! j)
@@ -162,8 +164,4 @@ getWitness i = onlyWhenInitialized $ \st -> do
 --------------------------------------------------------------------------------
 
 onlyWhenInitialized :: (ProgramState Fr -> IO a) -> IO a
-onlyWhenInitialized action = do
-  st <- readIORef stateRef
-  case st of
-    Just s -> action s
-    Nothing -> panic "state not initialized"
+onlyWhenInitialized action = readIORef stateRef >>= action
