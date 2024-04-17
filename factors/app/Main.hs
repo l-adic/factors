@@ -8,5 +8,6 @@ import ZK.Factors
 
 main :: IO ()
 main = do
-  let r1cs = toR1CS $ factorsCircuit $ factors @Fr
+  let Factors {..} = factors @Fr
+      r1cs = toR1CS factorsVars factorsCircuit
   encodeFile "factors-output/factors.r1cs" $ r1csToCircomR1CS r1cs

@@ -14,7 +14,7 @@ executable factors-solver
     RecordWildCards
   ghc-options:
     -Wall -Wunused-packages -no-hs-main -optl-mexec-model=reactor
-    "-optl-Wl,--export=init,--export=getNVars,--export=getVersion,--export=getRawPrime,--export=writeSharedRWMemory,--export=readSharedRWMemory,--export=getFieldNumLen32,--export=setInputSignal,--export=getWitnessSize,--export=getWitness"
+    "-optl-Wl,--export=init,--export=getNVars,--export=getVersion,--export=getRawPrime,--export=writeSharedRWMemory,--export=readSharedRWMemory,--export=getFieldNumLen32,--export=setInputSignal,--export=getInputSignalSize,--export=getWitnessSize,--export=getWitness,--export=getInputSize"
 
   build-depends:
     , arithmetic-circuits:circom-compat
