@@ -1,55 +1,79 @@
 module Main where
 
-import Data.Binary (encode)
-import Data.Binary.Get (runGet)
-import Data.ByteString.Lazy qualified as BL
-import Data.ByteString.Unsafe qualified as BU
-import Data.Map qualified as Map
-import Data.String (String)
-import Foreign hiding (void)
-import Foreign.C.Types
+import Circuit.Solver.Circom qualified as Circom
+import Data.IORef (IORef, newIORef)
 import Protolude
-import R1CS (Inputs (..), Witness)
-import R1CS.Circom (FieldSize (..), getInputs, witnessToCircomWitness)
-import ZK.Factors (FactorsCircuit (..), Fr, factorsCircuit, solver)
+import System.IO.Unsafe (unsafePerformIO)
+import ZK.Factors
 
 main :: IO ()
 main = mempty
 
--- marshalling
+stateRef :: IORef (Circom.ProgramState Fr)
+stateRef = unsafePerformIO $ do
+  st <- Circom.mkProgramState env
+  newIORef st
+{-# NOINLINE stateRef #-}
 
-foreign export ccall mallocPtr :: IO (Ptr (Ptr a))
+env :: Circom.ProgramEnv Fr
+env = Circom.mkProgramEnv (factorsVars @Fr factors) (factorsCircuit factors)
 
-mallocPtr :: IO (Ptr (Ptr a))
-mallocPtr = malloc
+foreign export ccall init :: Int -> IO ()
 
-foreign export ccall calculateWitnessRaw :: Ptr CChar -> Int -> Ptr (Ptr CChar) -> IO Int
+init :: Int -> IO ()
+init = Circom._init
 
-calculateWitnessRaw :: Ptr CChar -> Int -> Ptr (Ptr CChar) -> IO Int
-calculateWitnessRaw inputPtr inputLen outputPtrPtr = do
-  inputs <-
-    runGet (getInputs (FieldSize 32) nInputs) . BL.fromStrict <$> BU.unsafePackMallocCStringLen (inputPtr, inputLen)
-  let outputBytes =
-        BL.toStrict $ encode $ witnessToCircomWitness $ calculateWitness inputs
-  BU.unsafeUseAsCStringLen outputBytes \(buf, len) -> do
-    putStrLn ("Holy shit I'm printing this from inside a haskell program compiled to wasm" :: String)
-    outputPtr <- mallocBytes len
-    poke outputPtrPtr outputPtr
-    copyBytes outputPtr buf len
-    pure len
-  where
-    -- the factors program has 1 public input and 2 private inputs
-    nInputs :: Int
-    nInputs = 3
+foreign export ccall getNVars :: Int
 
-calculateWitness :: Inputs Fr -> Witness Fr
-calculateWitness (Inputs inputs) =
-  let FactorsCircuit {..} = factorsCircuit @Fr
-      n =
-        fromMaybe (panic "no private input") $
-          Map.lookup fcPublicInput inputs
-      (a, b) = fromMaybe (panic "no public inputs") $ do
-        case fcPrivateInputs of
-          [i1, i2] -> (,) <$> Map.lookup i1 inputs <*> Map.lookup i2 inputs
-          _ -> Nothing
-   in solver n (a, b)
+getNVars :: Int
+getNVars = Circom._getNVars env
+
+foreign export ccall getVersion :: Int
+
+getVersion :: Int
+getVersion = Circom._getVersion env
+
+foreign export ccall getRawPrime :: IO ()
+
+getRawPrime :: IO ()
+getRawPrime = Circom._getRawPrime env stateRef
+
+foreign export ccall writeSharedRWMemory :: Int -> Word32 -> IO ()
+
+writeSharedRWMemory :: Int -> Word32 -> IO ()
+writeSharedRWMemory = Circom._writeSharedRWMemory stateRef
+
+foreign export ccall readSharedRWMemory :: Int -> IO Word32
+
+readSharedRWMemory :: Int -> IO Word32
+readSharedRWMemory = Circom._readSharedRWMemory stateRef
+
+foreign export ccall getFieldNumLen32 :: Int
+
+getFieldNumLen32 :: Int
+getFieldNumLen32 = Circom._getFieldNumLen32 env
+
+foreign export ccall setInputSignal :: Word32 -> Word32 -> Int -> IO ()
+
+setInputSignal :: Word32 -> Word32 -> Int -> IO ()
+setInputSignal = Circom._setInputSignal env stateRef
+
+foreign export ccall getInputSize :: Int
+
+getInputSize :: Int
+getInputSize = Circom._getInputSize env
+
+foreign export ccall getInputSignalSize :: Word32 -> Word32 -> IO Int
+
+getInputSignalSize :: Word32 -> Word32 -> IO Int
+getInputSignalSize = Circom._getInputSignalSize
+
+foreign export ccall getWitnessSize :: Int
+
+getWitnessSize :: Int
+getWitnessSize = Circom._getWitnessSize env
+
+foreign export ccall getWitness :: Int -> IO ()
+
+getWitness :: Int -> IO ()
+getWitness = Circom._getWitness env stateRef

@@ -41,7 +41,7 @@
         );
         defaultGHC = perGHC.${defaultGHCVersion};
 
-        ormoluLive = import wasm/default.nix {
+        ormoluLive = import factors-solver/default.nix {
           inherit pkgs inputs defaultGHC;
         };
       in

@@ -28,9 +28,7 @@ common deps
 library
   import:           warnings, extensions, deps
   exposed-modules:  ZK.Factors
-  other-modules:
-    ZK.Factors.Circuit
-    ZK.Factors.Witness
+
 
   hs-source-dirs:   src
   default-language: GHC2021
@@ -42,6 +40,8 @@ executable factors
     , arithmetic-circuits:circom-compat
     , binary
     , factors
+    , aeson
+    , wl-pprint-text  >=1.2.0
 
   hs-source-dirs:   app
   default-language: GHC2021
