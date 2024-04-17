@@ -1,24 +1,36 @@
 module Main (main) where
 
+import Circuit (CircuitVars (..), solve)
 import qualified Data.Map as Map
+import qualified Data.Set as Set
 import Protolude
-import R1CS (Witness (Witness))
 import Test.Hspec
 import Test.QuickCheck
-import ZK.Factors (FactorsCircuit (..), Fr, factorsCircuit, solver)
+import ZK.Factors (Factors (..), Fr, factors)
 
 main :: IO ()
 main = hspec $ do
+  let circuit = factorsCircuit $ factors @Fr
+      vars = factorsVars $ factors @Fr
+      (n, a, b, out) = fromMaybe (panic "Inputs not found") $ do
+        _n <- Map.lookup "n" $ cvInputsLabels vars
+        _a <- Map.lookup "a" $ cvInputsLabels vars
+        _b <- Map.lookup "b" $ cvInputsLabels vars
+        _out <- case Set.toList $ cvOutputs vars of
+          [x] -> Just x
+          _ -> Nothing
+        pure (_n, _a, _b, _out)
   describe "Factors" $ do
-    let output = fcOutput $ factorsCircuit @Fr
     it "should accept valid factors" $ do
       property $
         \x y ->
-          let Witness w = solver @Fr (x * y) (x, y)
-           in Map.lookup output w == Just 1
+          let inputs = Map.fromList [(n, x * y), (a, x), (b, y)]
+              w = solve inputs circuit
+           in Map.lookup out w == Just 1
     it "shouldn't accept invalid factors" $ do
       property $
         \x y z ->
           (x * y /= z) ==>
-            let Witness w = solver @Fr z (x, y)
-             in Map.lookup output w == Just 0
+            let inputs = Map.fromList [(n, z), (a, x), (b, y)]
+                w = solve inputs circuit
+             in Map.lookup out w == Just 0
