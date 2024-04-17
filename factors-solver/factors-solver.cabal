@@ -17,11 +17,7 @@ executable factors-solver
     "-optl-Wl,--export=init,--export=getNVars,--export=getVersion,--export=getRawPrime,--export=writeSharedRWMemory,--export=readSharedRWMemory,--export=getFieldNumLen32,--export=setInputSignal,--export=getWitnessSize,--export=getWitness"
 
   build-depends:
-    , arithmetic-circuits
     , arithmetic-circuits:circom-compat
     , base            >=4.10  && <5
-    , containers
     , factors
-    , galois-field
     , protolude
-    , vector
