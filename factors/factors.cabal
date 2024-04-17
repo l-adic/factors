@@ -23,7 +23,6 @@ common deps
     , base
     , containers
     , galois-field
-    , propagators
 
 library
   import:           warnings, extensions, deps
