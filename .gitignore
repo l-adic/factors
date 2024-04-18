@@ -2,3 +2,7 @@
 dist-newstyle
 factors-output/factors.r1cs
 factors-output/factors.wasm
+output
+.spago
+.purs-repl
+node_modules
