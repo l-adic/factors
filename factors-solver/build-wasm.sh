@@ -16,4 +16,4 @@ else
     FACTORS_WASM_OPT="$WDIR/factors-opt.wasm"
     wasm-opt "$@" "$WDIR/factors-init.wasm" -o "$FACTORS_WASM_OPT"
 fi
-cp "$FACTORS_WASM_OPT" ../factors-output/factors.wasm
+cp "$FACTORS_WASM_OPT" ../www/circuit.wasm

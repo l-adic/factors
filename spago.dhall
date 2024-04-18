@@ -13,11 +13,13 @@ to generate this file without the comments in this block.
 { name = "my-project"
 , dependencies =
   [ "aff"
+  , "aff-promise"
   , "console"
   , "effect"
   , "either"
   , "halogen"
   , "halogen-formless"
+  , "integers"
   , "js-bigints"
   , "maybe"
   , "prelude"

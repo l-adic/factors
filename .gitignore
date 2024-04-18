@@ -1,7 +1,7 @@
 .direnv
 dist-newstyle
-factors-output/factors.r1cs
-factors-output/factors.wasm
+www/circuit.r1cs
+www/circuit.wasm
 output
 .spago
 .purs-repl

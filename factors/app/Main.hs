@@ -10,4 +10,4 @@ main :: IO ()
 main = do
   let Factors {..} = factors @Fr
       r1cs = toR1CS factorsVars factorsCircuit
-  encodeFile "factors-output/factors.r1cs" $ r1csToCircomR1CS r1cs
+  encodeFile "www/circuit.r1cs" $ r1csToCircomR1CS r1cs
