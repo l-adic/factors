@@ -9,3 +9,5 @@ node_modules
 dist/
 site/
 .parcel-cache/
+.psc-ide-port
+.vscode
