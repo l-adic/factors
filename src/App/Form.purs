@@ -3,7 +3,6 @@ module App.Form (component) where
 import Prelude
 
 import Data.Either (Either(..), note)
-import Data.Int as Int
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
 import Formless as F
@@ -11,14 +10,16 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import JS.BigInt (BigInt)
+import JS.BigInt as BigInt
 
 
 
 type Form :: (Type -> Type -> Type -> Type) -> Row Type
 type Form f =
-  ( factorA :: f String String Int
-  , factorB :: f String String Int
-  , product :: f String String Int
+  ( factorA :: f String String BigInt
+  , factorB :: f String String BigInt
+  , product :: f String String BigInt
   )
 
 type FormContext = F.FormContext (Form F.FieldState) (Form (F.FieldAction Action)) Unit Action
@@ -51,7 +52,7 @@ component = F.formless { liftAction: Eval } mempty $ H.mkComponent
       validation =
         let parseInt s
               | s == "" = Left "Required"
-              | otherwise = note "Invalid Int" $ Int.fromString s
+              | otherwise = note "Invalid Int" $ BigInt.fromString s
 
 
         in

@@ -17,12 +17,16 @@ to generate this file without the comments in this block.
   , "console"
   , "effect"
   , "either"
+  , "foldable-traversable"
+  , "foreign"
   , "halogen"
   , "halogen-formless"
-  , "integers"
+  , "identity"
   , "js-bigints"
   , "maybe"
+  , "newtype"
   , "prelude"
+  , "transformers"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

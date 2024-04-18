@@ -9,10 +9,11 @@ import Effect.Class.Console as Console
 import Halogen (liftAff, liftEffect)
 import Halogen as H
 import Halogen.HTML as HH
-import Prove (fullProve)
+import JS.BigInt (BigInt)
+import Prover.Prove (fullProve)
 import Type.Proxy (Proxy(..))
 
-type CircuitInput = {factorA :: Int, factorB :: Int, product :: Int}
+type CircuitInput = {factorA :: BigInt, factorB :: BigInt, product :: BigInt}
 
 type State =
   { circuitInput :: Maybe CircuitInput
@@ -52,5 +53,5 @@ component =
   handleAction = case _ of
     HandleCircuitInput ci -> do
       H.modify_ _ { circuitInput = Just ci }
-      liftAff $ fullProve {a: ci.factorA, b: ci.factorB, n: ci.product}
-      liftEffect $ Console.log $ show ci
+      proof <- liftAff $ fullProve {a: ci.factorA, b: ci.factorB, n: ci.product}
+      liftEffect $ Console.log $ show proof
