@@ -6,3 +6,6 @@ output
 .spago
 .purs-repl
 node_modules
+dist/
+site/
+.parcel-cache/
