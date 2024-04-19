@@ -2,7 +2,6 @@ module Main (main) where
 
 import Circuit (CircuitVars (..), solve)
 import qualified Data.Map as Map
-import qualified Data.Set as Set
 import Protolude
 import Test.Hspec
 import Test.QuickCheck
@@ -16,15 +15,13 @@ main = hspec $ do
         _n <- Map.lookup "n" $ cvInputsLabels vars
         _a <- Map.lookup "a" $ cvInputsLabels vars
         _b <- Map.lookup "b" $ cvInputsLabels vars
-        _out <- case Set.toList $ cvOutputs vars of
-          [x] -> Just x
-          _ -> Nothing
+        _out <- Map.lookup "out" $ cvInputsLabels vars
         pure (_n, _a, _b, _out)
   describe "Factors" $ do
     it "should accept valid factors" $ do
       property $
         \x y ->
-          let inputs = Map.fromList [(n, x * y), (a, x), (b, y)]
+          let inputs = Map.fromList [(n, x * y), (a, x), (b, y), (out,1)]
               w = solve vars circuit inputs
            in Map.lookup out w == Just 1
     it "shouldn't accept invalid factors" $ do

@@ -15,7 +15,7 @@ static void malloc_inspect_all_handler(void *start, void *end,
 
 __attribute__((export_name("wizer.initialize"))) void __wizer_initialize(void) {
   char *args[] = {
-      "factors-solver.wasm", "+RTS", "-H64m", "-RTS", NULL};
+      "circuit.wasm", "+RTS", "-H64m", "-RTS", NULL};
   int argc = sizeof(args) / sizeof(args[0]) - 1;
   char **argv = args;
   hs_init_with_rtsopts(&argc, &argv);

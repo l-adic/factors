@@ -1,4 +1,8 @@
 {
   "extends": "@parcel/config-default",
   "resolvers": ["@parcel/resolver-default"],
+   "transformers": {
+        "*.wasm": ["@parcel/transformer-raw"],
+        "*.zkey": ["@parcel/transformer-raw"],
+    }
 }

@@ -18,7 +18,8 @@ factorsE = do
   a <- deref <$> freshPrivateInput "a"
   b <- deref <$> freshPrivateInput "b"
   let isFactorization = eq n (a `mul` b)
-  ret $ cond isFactorization (c 1) (c 0)
+  compileWithWire (freshPublicInput "out") $ 
+    cond isFactorization (c 1) (c 0)
 
 type Fr = Prime 21888242871839275222246405745257275088548364400416034343698204186575808495617
 
