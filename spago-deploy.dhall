@@ -13,25 +13,20 @@ to generate this file without the comments in this block.
 { name = "my-project"
 , dependencies =
   [ "aff"
-  , "aff-promise"
-  , "console"
+  , "chanterelle"
   , "effect"
   , "either"
-  , "eth-core"
-  , "foldable-traversable"
-  , "foreign"
-  , "halogen"
-  , "halogen-formless"
+  , "exceptions"
   , "identity"
-  , "js-bigints"
+  , "integers"
   , "maybe"
-  , "newtype"
+  , "node-process"
   , "prelude"
-  , "record"
+  , "profunctor-lenses"
   , "tagged"
   , "transformers"
   , "web3"
   ]
 , packages = ./packages.dhall
-, sources = [ "src/**/*.purs", "test/**/*.purs" ]
+, sources = [ "src/Contracts/*.purs", "deploy/Deploy/*.purs" ]
 }
