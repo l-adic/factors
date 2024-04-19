@@ -1,6 +1,6 @@
 .direnv
 dist-newstyle
-www/circuit.r1cs
+www/circuit_final.zkey
 www/circuit.wasm
 output
 .spago
@@ -11,3 +11,4 @@ site/
 .parcel-cache/
 .psc-ide-port
 .vscode
+trusted-setup/circuit.r1cs
