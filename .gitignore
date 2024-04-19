@@ -12,3 +12,6 @@ site/
 .psc-ide-port
 .vscode
 trusted-setup/circuit.r1cs
+build
+contracts/
+src/Contracts/
