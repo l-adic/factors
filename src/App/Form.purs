@@ -13,8 +13,6 @@ import Halogen.HTML.Properties as HP
 import JS.BigInt (BigInt)
 import JS.BigInt as BigInt
 
-
-
 type Form :: (Type -> Type -> Type -> Type) -> Row Type
 type Form f =
   ( factorA :: f String String BigInt
@@ -50,10 +48,10 @@ component = F.formless { liftAction: Eval } mempty $ H.mkComponent
     let
       validation :: { | Form F.FieldValidation }
       validation =
-        let parseInt s
-              | s == "" = Left "Required"
-              | otherwise = note "Invalid Int" $ BigInt.fromString s
-
+        let
+          parseInt s
+            | s == "" = Left "Required"
+            | otherwise = note "Invalid Int" $ BigInt.fromString s
 
         in
           { factorA: parseInt

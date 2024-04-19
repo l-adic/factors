@@ -13,7 +13,7 @@ import JS.BigInt (BigInt)
 import Prover.Prove (fullProve)
 import Type.Proxy (Proxy(..))
 
-type CircuitInput = {factorA :: BigInt, factorB :: BigInt, product :: BigInt}
+type CircuitInput = { factorA :: BigInt, factorB :: BigInt, product :: BigInt }
 
 type State =
   { circuitInput :: Maybe CircuitInput
@@ -53,5 +53,5 @@ component =
   handleAction = case _ of
     HandleCircuitInput ci -> do
       H.modify_ _ { circuitInput = Just ci }
-      proof <- liftAff $ fullProve {a: ci.factorA, b: ci.factorB, n: ci.product}
+      proof <- liftAff $ fullProve { a: ci.factorA, b: ci.factorB, n: ci.product }
       liftEffect $ Console.log $ show proof

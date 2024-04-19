@@ -1,0 +1,16 @@
+{
+    "name": "purs-zk",
+    "version": "0.0.1",
+    "artifacts-dir": "build/contracts",
+    "source-dir": "contracts",
+    "modules": [
+        "TestVerifier",
+        "Verifier"
+    ],
+    "solc-evm-version": "berlin",
+    "solc-output-selection": [],
+    "purescript-generator": {
+        "output-path": "./src",
+        "module-prefix": "Contracts"
+    }
+}

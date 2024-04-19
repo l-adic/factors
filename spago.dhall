@@ -27,6 +27,7 @@ to generate this file without the comments in this block.
   , "newtype"
   , "prelude"
   , "transformers"
+  , "web3"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

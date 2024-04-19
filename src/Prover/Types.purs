@@ -16,7 +16,7 @@ derive newtype instance Show Fp
 derive newtype instance Eq Fp
 
 decodeFp :: Foreign -> F Fp
-decodeFp x = Fp <$> do 
+decodeFp x = Fp <$> do
   f <- F.readString x
   case BigInt.fromString f of
     Just a -> pure a
@@ -40,8 +40,8 @@ decodeG1 fs = do
 
 -- for some reason snarkjs includes a third value which is always 1
 encodeG1 :: G1 -> Foreign
-encodeG1 (G1 { x, y , z}) = F.unsafeToForeign $ 
-  map encodeFp [x, y, z]
+encodeG1 (G1 { x, y, z }) = F.unsafeToForeign $
+  map encodeFp [ x, y, z ]
 
 newtype Fp2 = Fp2 { real :: Fp, imag :: Fp }
 
@@ -55,8 +55,8 @@ decodeFp2 fs = do
   pure $ Fp2 { real, imag }
 
 encodeFp2 :: Fp2 -> Foreign
-encodeFp2 (Fp2 { real, imag }) = F.unsafeToForeign $ 
-  map encodeFp [real, imag]
+encodeFp2 (Fp2 { real, imag }) = F.unsafeToForeign $
+  map encodeFp [ real, imag ]
 
 newtype G2 = G2 { x :: Fp2, y :: Fp2, z :: Fp2 }
 
@@ -64,8 +64,8 @@ derive newtype instance Show G2
 derive newtype instance Eq G2
 
 encodeG2 :: G2 -> Foreign
-encodeG2 (G2 { x, y, z }) = F.unsafeToForeign $ 
-  map encodeFp2 [x, y, z]
+encodeG2 (G2 { x, y, z }) = F.unsafeToForeign $
+  map encodeFp2 [ x, y, z ]
 
 decodeG2 :: Foreign -> F G2
 decodeG2 fs = do
@@ -85,7 +85,7 @@ derive newtype instance Eq Proof
 
 encodeProof :: Proof -> Foreign
 encodeProof (Proof { a, b, c }) =
-  F.unsafeToForeign {pi_a: encodeG1 a, pi_b: encodeG2 b, pi_c: encodeG1 c}
+  F.unsafeToForeign { pi_a: encodeG1 a, pi_b: encodeG2 b, pi_c: encodeG1 c }
 
 decodeProof :: Foreign -> F Proof
 decodeProof obj = do
@@ -93,7 +93,6 @@ decodeProof obj = do
   b <- decodeG2 =<< F.readProp "pi_b" obj
   c <- decodeG1 =<< F.readProp "pi_c" obj
   pure $ Proof { a, b, c }
-
 
 newtype VerifyingKey = VerifyingKey
   { alpha1 :: G1

@@ -1,105 +1,74 @@
-{-
-Welcome to your new Dhall package-set!
-
-Below are instructions for how to edit this file for most use
-cases, so that you don't need to know Dhall to use it.
-
-## Use Cases
-
-Most will want to do one or both of these options:
-1. Override/Patch a package's dependency
-2. Add a package not already in the default package set
-
-This file will continue to work whether you use one or both options.
-Instructions for each option are explained below.
-
-### Overriding/Patching a package
-
-Purpose:
-- Change a package's dependency to a newer/older release than the
-    default package set's release
-- Use your own modified version of some dependency that may
-    include new API, changed API, removed API by
-    using your custom git repo of the library rather than
-    the package set's repo
-
-Syntax:
-where `entityName` is one of the following:
-- dependencies
-- repo
-- version
--------------------------------
-let upstream = --
-in  upstream
-  with packageName.entityName = "new value"
--------------------------------
-
-Example:
--------------------------------
-let upstream = --
-in  upstream
-  with halogen.version = "master"
-  with halogen.repo = "https://example.com/path/to/git/repo.git"
-
-  with halogen-vdom.version = "v4.0.0"
-  with halogen-vdom.dependencies = [ "extra-dependency" ] # halogen-vdom.dependencies
--------------------------------
-
-### Additions
-
-Purpose:
-- Add packages that aren't already included in the default package set
-
-Syntax:
-where `<version>` is:
-- a tag (i.e. "v4.0.0")
-- a branch (i.e. "master")
-- commit hash (i.e. "701f3e44aafb1a6459281714858fadf2c4c2a977")
--------------------------------
-let upstream = --
-in  upstream
-  with new-package-name =
-    { dependencies =
-       [ "dependency1"
-       , "dependency2"
-       ]
-    , repo =
-       "https://example.com/path/to/git/repo.git"
-    , version =
-        "<version>"
-    }
--------------------------------
-
-Example:
--------------------------------
-let upstream = --
-in  upstream
-  with benchotron =
-      { dependencies =
-          [ "arrays"
-          , "exists"
-          , "profunctor"
-          , "strings"
-          , "quickcheck"
-          , "lcg"
-          , "transformers"
-          , "foldable-traversable"
-          , "exceptions"
-          , "node-fs"
-          , "node-buffer"
-          , "node-readline"
-          , "datetime"
-          , "now"
-          ]
-      , repo =
-          "https://github.com/hdgarrood/purescript-benchotron.git"
-      , version =
-          "v7.0.0"
-      }
--------------------------------
--}
 let upstream =
       https://github.com/purescript/package-sets/releases/download/psc-0.15.15-20240416/packages.dhall
         sha256:ca727657c01cc31d0e79c2113b59126b9826f4b56d20a8193be3c725599fb754
 
-in  upstream
+let web3-deps =
+      https://raw.githubusercontent.com/f-o-a-m/chanterelle/master/packages.dhall
+        sha256:430e33712dea8927565a2efdff4f91b02dc3840fce000a1b8a7d82876c00ee80
+
+let additions =
+      { bytestrings = web3-deps.bytestrings
+      , chanterelle =
+        { dependencies =
+          [ "aff"
+          , "ansi"
+          , "argonaut"
+          , "argonaut-core"
+          , "argonaut-traversals"
+          , "arrays"
+          , "avar"
+          , "bifunctors"
+          , "console"
+          , "control"
+          , "datetime"
+          , "effect"
+          , "either"
+          , "eth-core"
+          , "exceptions"
+          , "foldable-traversable"
+          , "foreign-object"
+          , "functors"
+          , "identity"
+          , "integers"
+          , "js-date"
+          , "logging"
+          , "maybe"
+          , "newtype"
+          , "node-buffer"
+          , "node-fs"
+          , "node-path"
+          , "node-process"
+          , "now"
+          , "optparse"
+          , "ordered-collections"
+          , "parallel"
+          , "partial"
+          , "prelude"
+          , "profunctor-lenses"
+          , "record"
+          , "refs"
+          , "simple-json"
+          , "solc"
+          , "strings"
+          , "transformers"
+          , "tuples"
+          , "unfoldable"
+          , "validation"
+          , "web3"
+          , "web3-generator"
+          ]
+        , repo = "https://github.com/f-o-a-m/chanterelle.git"
+        , version = "v7.0.0-rc6"
+        }
+      , coroutine-transducers = web3-deps.coroutine-transducers
+      , dodo-printer = web3-deps.dodo-printer
+      , eth-core = web3-deps.eth-core
+      , quotient = web3-deps.quotient
+      , solc = web3-deps.solc
+      , tidy = web3-deps.tidy
+      , tidy-codegen = web3-deps.tidy-codegen
+      , web3 = web3-deps.web3
+      , web3-generator = web3-deps.web3-generator
+      }
+
+in  upstream // additions
