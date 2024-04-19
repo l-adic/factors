@@ -1,7 +1,7 @@
 {
     "name": "factors",
     "version": "0.0.1",
-    "artifacts-dir": "build",
+    "artifacts-dir": "build/contracts",
     "source-dir": "contracts",
     "modules": [
         "Groth16Verifier"
