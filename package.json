@@ -8,7 +8,7 @@
     "build": "spago build",
     "parcel": "parcel www/* --no-cache",
     "tidy": "purs-tidy format-in-place \"src/**/*.purs\" \"test/**/*.purs\"",
-    "tidy-check": "purs-tidy check \"src/**/*.purs\" \"test/**/*.purs\""
+    "tidy-check": "purs-tidy check \"app/**/*.purs\" \"deploy/**/*.purs\""
   },
   "author": "",
   "license": "ISC",

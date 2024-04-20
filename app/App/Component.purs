@@ -12,7 +12,7 @@ import Halogen.HTML as HH
 import JS.BigInt (BigInt)
 import Network.Ethereum.Web3 (Provider, runWeb3)
 import Prover.Prove (fullProve)
-import Prover.Verify (verify)
+import Prover.Verify (verifierAddress, verify)
 import Type.Proxy (Proxy(..))
 
 type CircuitInput = { factorA :: BigInt, factorB :: BigInt, product :: BigInt }
@@ -52,7 +52,8 @@ component =
   render st =
     HH.div_
       [ HH.slot _circuitInput 0 Form.component unit HandleCircuitInput
-      , HH.text $ fromMaybe "" st.message
+      , HH.div_ [ HH.text $ fromMaybe "" st.message ]
+      , HH.div_ [ HH.text $ "Verifier Contract: " <> show verifierAddress ]
       ]
 
   handleAction = case _ of

@@ -28,5 +28,5 @@ to generate this file without the comments in this block.
   , "web3"
   ]
 , packages = ./packages.dhall
-, sources = [ "src/Contracts/*.purs", "deploy/Deploy/*.purs" ]
+, sources = [ "app/Contracts/*.purs", "deploy/Deploy/*.purs" ]
 }

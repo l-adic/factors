@@ -9,7 +9,7 @@
     "solc-evm-version": "berlin",
     "solc-output-selection": [],
     "purescript-generator": {
-        "output-path": "./src",
+        "output-path": "./app",
         "module-prefix": "Contracts"
     }
 }
