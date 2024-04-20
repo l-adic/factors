@@ -1,0 +1,1 @@
+export const verifierAddressStr = process.env.VERIFIER_ADDRESS;

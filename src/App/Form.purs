@@ -66,7 +66,7 @@ component = F.formless { liftAction: Eval } mempty $ H.mkComponent
     HH.form
       [ HE.onSubmit formActions.handleSubmit ]
       [ HH.div_
-          [ HH.text "Enter numbers a and b which mulitply to n."
+          [ HH.text "Enter numbers a, b, n such that a * b == n"
           ]
       , HH.div_
           [ HH.label_ [ HH.text "a: " ]

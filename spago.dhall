@@ -14,6 +14,7 @@ to generate this file without the comments in this block.
 , dependencies =
   [ "aff"
   , "aff-promise"
+  , "arrays"
   , "console"
   , "effect"
   , "either"
@@ -26,7 +27,9 @@ to generate this file without the comments in this block.
   , "js-bigints"
   , "maybe"
   , "newtype"
+  , "partial"
   , "prelude"
+  , "profunctor-lenses"
   , "record"
   , "tagged"
   , "transformers"

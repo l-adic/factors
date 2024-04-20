@@ -71,4 +71,25 @@ let additions =
       , web3-generator = web3-deps.web3-generator
       }
 
-in  upstream // additions
+let overrides =
+      { node-buffer =
+        { dependencies =
+          [ "arraybuffer-types"
+          , "assert"
+          , "console"
+          , "effect"
+          , "foldable-traversable"
+          , "functions"
+          , "maybe"
+          , "nullable"
+          , "partial"
+          , "prelude"
+          , "st"
+          , "unsafe-coerce"
+          ]
+        , repo = "https://github.com/l-adic/purescript-node-buffer.git"
+        , version = "12aaa4a98d2aadd506261c8bed051cee0e49b0ba"
+        }
+      }
+
+in  upstream // overrides // additions
