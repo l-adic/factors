@@ -1,0 +1,50 @@
+{
+  "name": "factors",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "postinstall": "spago -x bootstrap.dhall build --deps-only",
+    "chanterelle-build": "spago -x bootstrap.dhall run -m ChanterelleMain --node-args=\"build\"",
+    "chanterelle-deploy": "npx spago -x spago-deploy.dhall run -m Deploy.Main",
+    "build": "spago build",
+    "parcel": "parcel www/* --no-cache",
+    "tidy": "purs-tidy format-in-place \"src/**/*.purs\" \"test/**/*.purs\"",
+    "tidy-check": "purs-tidy check \"app/**/*.purs\" \"deploy/**/*.purs\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "constants-browserify": "^1.0.0",
+    "crypto-browserify": "^3.12.0",
+    "events": "^3.3.0",
+    "os-browserify": "^0.3.0",
+    "parcel": "^2.12.0",
+    "path-browserify": "^1.0.1",
+    "process": "^0.11.10",
+    "purescript": "^0.15.15",
+    "purescript-psa": "^0.8.2",
+    "purs-tidy": "^0.10.0",
+    "solc": "v0.8.15",
+    "spago": "^0.21.0",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.5",
+    "vm-browserify": "^1.1.2"
+  },
+  "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.3.0",
+    "ethjs-provider-http": "^0.1.6",
+    "keccak": "^3.0.0",
+    "secp256k1": "^5.0.0",
+    "snarkjs": "github:l-adic/snarkjs#actually-use-wasm-options"
+  },
+  "overrides": {
+    "circom_runtime": "github:l-adic/circom_runtime#wasi-import-options"
+  },
+  "parcel": {
+    "aliases": {
+      "@bjorn3/browser_wasi_shim": "./node_modules/@bjorn3/browser_wasi_shim/src",
+      "snarkjs": "./node_modules/snarkjs/build/main.cjs"
+    }
+  }
+}

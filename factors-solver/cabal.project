@@ -29,11 +29,11 @@ source-repository-package
 source-repository-package
   type: git
   location: https://github.com/l-adic/galois-fields.git
-  tag: 59621fe3a47c793296cef689c9d0a3ef88cecfd5
+  tag: fc82039e811ba68c10527cf871796b7ac8514926
   --sha256: XqWLIt67+PRcuFLAdviV5IjNOl4pht7chyBr8PLE+kk=
 
 source-repository-package
   type: git
   location: https://github.com/l-adic/arithmetic-circuits.git
-  tag: f928a07530b30548f41e028c5859cb75bc5dbd95
+  tag: 3212f88b9ff6e4c074fc7908ec72e15cbfc8015e
   --sha256: M2vQxDut5NNtlNAHiC2CU1zO+exiI8dNPFvrNxtbhkI=
