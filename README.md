@@ -5,11 +5,21 @@ The hello world app of ZK: prove you know a factorization without revealing the 
 This repo serves as a guide to show how to plug a ZK Haskell program into existing proving software. In this case we want to build a browser based proving application with an Ethereum smart contract verifier, and we will make use of the [snarkjs](https://github.com/iden3/snarkjs) proving library. There are similar integrations for [arkworks](https://github.com/arkworks-rs) and more to come.
 
 ## Setup
-- You must have nix and some recent version of node. 
-- You should have a local ethereum node with an unlocked default account and the web3 api running on the default port `8545`. E.g. use hardhat or [cliquebait](https://github.com/f-o-a-m/cliquebait)
+
+### nix
+You must have nix installed and ideally [direnv](https://github.com/nix-community/nix-direnv). The haskell builds are managed by different nix shells depending on the directory because we require both the normal and WASM GHC.
+
+### npm
+All other builds/tools are managed via npm. To get started, run 
+
+```
+> npm install
+```
+
+### Ethereum node
+You should have a local ethereum node with an unlocked default account and the web3 api running on the default port `8545`. E.g. use hardhat or [cliquebait](https://github.com/f-o-a-m/cliquebait)
 
 ## Contents
-
 
 ### The factors zk program
 A ZK program written in a Haskell DSL that expresses a factorization of a public input `n` into a product of secret inputs `a` and `b`. You can produce a circom compatible `r1cs` file for this program by running 
