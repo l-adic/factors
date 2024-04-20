@@ -32,6 +32,8 @@ A ZK program written in a Haskell DSL that expresses a factorization of a public
 > cabal run factors
 ```
 
+You should see an artifact `trusted-setup/circuit.r1cs`.
+
 ### A factors program constraint solver
 A constraint solver applied to the `factors` program. You can produce a circom compatible WASM binary for this solver by running
 
@@ -39,6 +41,8 @@ A constraint solver applied to the `factors` program. You can produce a circom c
 > cd factors-solver
 > ./build-wasm
 ```
+
+You should see an artifact `www/circuit.wasm`.
 
 ### A Groth16 Solidity Verifying contract
 Assuming you have run the above, you should see a `circuit.r1cs` file in the `trusted-setup` directory. To produce a final proving key and solidity verifier:
@@ -53,6 +57,8 @@ You can verify your proving key:
 ```
 > npx snarkjs zkey verify trusted-setup/circuit.r1cs trusted-setup/pot14_final.ptau trusted-setup/circuit_final.zkey
 ```
+
+NOTE: It is also possible to generate a witness, construct a proof and verify it using the standard `snarkjs` cli commands with the artifacts we have created.
 
 You can comple the contracts, build the purescript ffi, and deploy this smart contract via 
 
