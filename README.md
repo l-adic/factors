@@ -17,7 +17,11 @@ All other builds/tools are managed via npm. To get started, run
 ```
 
 ### Ethereum node
-You should have a local ethereum node with an unlocked default account and the web3 api running on the default port `8545`. E.g. use hardhat or [cliquebait](https://github.com/f-o-a-m/cliquebait)
+You should have a local ethereum node with an unlocked default account and the web3 api running on the default port `8545`. E.g. use hardhat or [cliquebait](https://github.com/f-o-a-m/cliquebait):
+
+```
+> docker run --rm -it -p 8545:8545 foamspace/cliquebait:latest
+```
 
 ## Contents
 
