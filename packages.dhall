@@ -3,12 +3,11 @@ let upstream =
         sha256:ca727657c01cc31d0e79c2113b59126b9826f4b56d20a8193be3c725599fb754
 
 let web3-deps =
-      https://raw.githubusercontent.com/f-o-a-m/chanterelle/master/packages.dhall
-        sha256:430e33712dea8927565a2efdff4f91b02dc3840fce000a1b8a7d82876c00ee80
+      https://raw.githubusercontent.com/f-o-a-m/chanterelle/v7.0.0-rc6/packages.dhall
+        sha256:56c0e5b02ed94186f5263e6da800bd1cc7f09fd5f6a9ab1e5f8c91ef23f5a297
 
 let additions =
-      { bytestrings = web3-deps.bytestrings
-      , chanterelle =
+      { chanterelle =
         { dependencies =
           [ "aff"
           , "ansi"
@@ -63,7 +62,6 @@ let additions =
       , coroutine-transducers = web3-deps.coroutine-transducers
       , dodo-printer = web3-deps.dodo-printer
       , eth-core = web3-deps.eth-core
-      , quotient = web3-deps.quotient
       , solc = web3-deps.solc
       , tidy = web3-deps.tidy
       , tidy-codegen = web3-deps.tidy-codegen
