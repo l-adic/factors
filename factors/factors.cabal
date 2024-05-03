@@ -20,6 +20,7 @@ common deps
   build-depends:
       protolude
     , arithmetic-circuits
+    , arithmetic-circuits:language
     , base
     , containers
     , galois-field
