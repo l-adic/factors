@@ -20,6 +20,7 @@ common deps
   build-depends:
       protolude
     , arithmetic-circuits
+    , arithmetic-circuits:circom-compat
     , arithmetic-circuits:language
     , base
     , containers
@@ -37,8 +38,7 @@ executable factors
   import:           warnings, extensions, deps
   main-is:          Main.hs
   build-depends:
-    , arithmetic-circuits:circom-compat
-    , binary
+      binary
     , factors
     , aeson
     , wl-pprint-text  >=1.2.0

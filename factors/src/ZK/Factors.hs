@@ -10,6 +10,7 @@ where
 
 import Circuit
 import Circuit.Language
+import R1CS.Circom (circomReindexMap)
 import Data.Field.Galois (GaloisField, Prime)
 import Protolude
 
@@ -19,7 +20,7 @@ factorsE :: (GaloisField f, Hashable f) => ExprM f (Var Wire f Bool)
 factorsE = do
   n <- var_ <$> fieldInput Public "n"
   a <- var_ <$> fieldInput Private "a"
-  b <- var_ <$> fieldInput Public "b"
+  b <- var_ <$> fieldInput Private "b"
   boolOutput "out" $ eq_ n (a * b)
 
 data Factors f = Factors
@@ -30,7 +31,8 @@ data Factors f = Factors
 factors :: forall f. (GaloisField f, Hashable f) => Factors f
 factors =
   let BuilderState {..} = snd $ runCircuitBuilder (factorsE @f)
+      f = circomReindexMap bsVars
    in Factors
-        { factorsCircuit = bsCircuit,
-          factorsVars = bsVars
+        { factorsCircuit = reindex f bsCircuit,
+          factorsVars = reindex f bsVars
         }

@@ -16,7 +16,8 @@ stateRef = unsafePerformIO $ do
 {-# NOINLINE stateRef #-}
 
 env :: Circom.ProgramEnv Fr
-env = Circom.mkProgramEnv (factorsVars @Fr factors) (factorsCircuit factors)
+env = 
+  Circom.mkProgramEnv (factorsVars @Fr factors) (factorsCircuit factors)
 
 foreign export ccall init :: Int -> IO ()
 
