@@ -3,15 +3,20 @@ module App.Component where
 import Prelude
 
 import App.Form as Form
+import Data.Array ((!!))
 import Data.Either (Either(..))
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(..), fromJust, fromMaybe)
 import Effect.Aff (Aff, attempt)
+import Effect.Class.Console as Console
 import Halogen (liftAff)
 import Halogen as H
 import Halogen.HTML as HH
 import JS.BigInt (BigInt)
+import JS.BigInt as BigInt
 import Network.Ethereum.Web3 (Provider, runWeb3)
+import Partial.Unsafe (unsafePartial)
 import Prover.Prove (fullProve)
+import Prover.Types (Fp(..), Inputs(..))
 import Prover.Verify (verifierAddress, verify)
 import Type.Proxy (Proxy(..))
 
@@ -62,8 +67,9 @@ component =
       eProof <- liftAff $ attempt $
         fullProve { a: ci.factorA, b: ci.factorB, n: ci.product }
       case eProof of
-        Left _ -> do
-          let msg = "Prover Error, are you sure the statement is true?"
+        Left e -> do
+          Console.log $ "Prover Error: " <> show e
+          let msg = "Prover Error, check console logs for details."
           H.modify_ _ { message = Just msg }
         Right { inputs, proof } -> do
           { provider } <- H.get
@@ -74,5 +80,13 @@ component =
               Right res ->
                 case res of
                   Left callError -> "Call Error " <> show callError
-                  Right b -> "Proof validated by conract: " <> show b
+                  -- this contract reverts if it doesn't terminate with true
+                  Right _ -> 
+                    let ins = unsafePartial $ fromJust do
+                          let Inputs is = inputs  
+                          out <- is !! 0
+                          n <- is !! 1
+                          -- the output is a field encoded boolean value
+                          pure {out: out == Fp (BigInt.fromInt 1), n}
+                    in "Proof validated by conract with public inputs " <> show ins
           H.modify_ _ { message = Just msg }
