@@ -38,7 +38,7 @@ You should see an artifact `trusted-setup/circuit.r1cs`.
 A constraint solver applied to the `factors` program. You can produce a circom compatible WASM binary for this solver by running
 
 ```
-> cd factors-solver
+> cd wasm-solver
 > ./build-wasm
 ```
 

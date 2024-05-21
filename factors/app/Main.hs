@@ -11,3 +11,4 @@ main :: IO ()
 main = do
   let r1cs = r1csToCircomR1CS $ toR1CS (cpVars factors) (cpCircuit factors)
   encodeFile "trusted-setup/circuit.r1cs" r1cs
+  encodeFile "trusted-setup/circuit.bin" factors

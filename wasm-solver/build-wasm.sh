@@ -3,9 +3,9 @@ set -e
 WDIR="$(mktemp -d)"
 trap 'rm -rf -- "$WDIR"' EXIT
 
-wasm32-wasi-cabal build exe:factors-solver --minimize-conflict-set
-wasm32-wasi-cabal list-bin exe:factors-solver
-FACTORS_WASM="$(wasm32-wasi-cabal list-bin exe:factors-solver)"
+wasm32-wasi-cabal build exe:wasm-solver --minimize-conflict-set
+wasm32-wasi-cabal list-bin exe:wasm-solver
+FACTORS_WASM="$(wasm32-wasi-cabal list-bin exe:wasm-solver)"
 wizer \
     --allow-wasi --wasm-bulk-memory true \
     "$FACTORS_WASM" -o "$WDIR/factors-init.wasm" \
