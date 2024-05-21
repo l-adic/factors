@@ -34,16 +34,27 @@ library
   hs-source-dirs:   src
   default-language: GHC2021
 
-executable factors
+executable compile
   import:           warnings, extensions, deps
   main-is:          Main.hs
   build-depends:
       binary
     , factors
-    , aeson
-    , wl-pprint-text  >=1.2.0
 
-  hs-source-dirs:   app
+  hs-source-dirs:   compile
+  default-language: GHC2021
+
+executable native-solver
+  import:           warnings, extensions, deps
+  main-is:          Main.hs
+  build-depends:
+      aeson
+    , binary
+    , factors
+    , file-embed >= 0.0.16.0
+    , string-conversions
+
+  hs-source-dirs:   native-solver
   default-language: GHC2021
 
 test-suite factors-test

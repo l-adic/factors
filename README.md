@@ -29,7 +29,7 @@ You should have a local ethereum node with an unlocked default account and the w
 A ZK program written in a Haskell DSL that expresses a factorization of a public input `n` into a product of secret inputs `a` and `b`. You can produce a circom compatible `r1cs` file for this program by running 
 
 ```
-> cabal run factors
+> cabal run compile
 ```
 
 You should see an artifact `trusted-setup/circuit.r1cs`.

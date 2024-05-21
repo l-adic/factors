@@ -4,7 +4,7 @@ import Circuit.Solver.Circom qualified as Circom
 import Data.IORef (IORef, newIORef)
 import Protolude
 import System.IO.Unsafe (unsafePerformIO)
-import ZK.Factors (factors, Fr)
+import ZK.Factors (Fr, factors)
 
 main :: IO ()
 main = mempty
