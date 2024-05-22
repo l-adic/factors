@@ -13,6 +13,7 @@ common extensions
     DataKinds
     TypeApplications
     NoImplicitPrelude
+    NamedFieldPuns
     RecordWildCards
     OverloadedStrings
 
@@ -34,27 +35,13 @@ library
   hs-source-dirs:   src
   default-language: GHC2021
 
-executable compile
+executable cli
   import:           warnings, extensions, deps
   main-is:          Main.hs
   build-depends:
-      binary
-    , factors
+      factors
 
-  hs-source-dirs:   compile
-  default-language: GHC2021
-
-executable native-solver
-  import:           warnings, extensions, deps
-  main-is:          Main.hs
-  build-depends:
-      aeson
-    , binary
-    , factors
-    , file-embed >= 0.0.16.0
-    , string-conversions
-
-  hs-source-dirs:   native-solver
+  hs-source-dirs:   cli
   default-language: GHC2021
 
 test-suite factors-test
