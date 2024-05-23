@@ -7,6 +7,9 @@
     "*.wasm": [
       "@parcel/transformer-raw"
     ],
+    "*.bin": [
+      "@parcel/transformer-raw"
+    ],
     "*.zkey": [
       "@parcel/transformer-raw"
     ]

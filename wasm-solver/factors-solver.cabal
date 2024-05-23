@@ -1,8 +1,8 @@
 cabal-version: 3.0
-name:          factors-solver
+name:          wasm-solver
 version:       0.0.0.0
 
-executable factors-solver
+executable wasm-solver
   main-is:          Main.hs
   c-sources:        cbits/init.c
   hs-source-dirs:   app
@@ -19,5 +19,6 @@ executable factors-solver
   build-depends:
       arithmetic-circuits:circom-compat
     , base            >=4.10  && <5
+    , binary
     , factors
     , protolude

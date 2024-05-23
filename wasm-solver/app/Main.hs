@@ -1,10 +1,11 @@
 module Main where
 
-import Circuit.Solver.Circom qualified as Circom
+import Data.Binary (decodeFile)
+import Circom.Solver qualified as Circom
 import Data.IORef (IORef, newIORef)
 import Protolude
 import System.IO.Unsafe (unsafePerformIO)
-import ZK.Factors
+import ZK.Factors (Fr)
 
 main :: IO ()
 main = mempty
@@ -16,13 +17,15 @@ stateRef = unsafePerformIO $ do
 {-# NOINLINE stateRef #-}
 
 env :: Circom.ProgramEnv Fr
-env = 
-  Circom.mkProgramEnv (factorsVars @Fr factors) (factorsCircuit factors)
+env = unsafePerformIO $ do
+  p <- decodeFile "/circuit.bin"
+  pure $ Circom.mkProgramEnv p
+{-# NOINLINE env #-}
 
 foreign export ccall init :: Int -> IO ()
 
 init :: Int -> IO ()
-init = Circom._init
+init = Circom._init env stateRef
 
 foreign export ccall getNVars :: Int
 

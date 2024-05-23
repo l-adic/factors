@@ -41,7 +41,7 @@
         );
         defaultGHC = perGHC.${defaultGHCVersion};
 
-        ormoluLive = import factors-solver/default.nix {
+        wasmSolver = import wasm-solver/default.nix {
           inherit pkgs inputs defaultGHC;
         };
       in
@@ -63,8 +63,8 @@
             withHoogle = false;
             exactDeps = false;
           };
-          ormoluLive = ormoluLive.shell;
-          ghcWasm = ormoluLive.ghcWasmShell;
+          wasmSolver = wasmSolver.shell;
+          ghcWasm = wasmSolver.ghcWasmShell;
         };
         legacyPackages = defaultGHC // perGHC;
       });

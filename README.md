@@ -26,19 +26,30 @@ You should have a local ethereum node with an unlocked default account and the w
 ## Contents
 
 ### The factors zk program
-A ZK program written in a Haskell DSL that expresses a factorization of a public input `n` into a product of secret inputs `a` and `b`. You can produce a circom compatible `r1cs` file for this program by running 
+A ZK program written in a Haskell DSL that expresses a factorization of a public input `n` into a product of secret inputs `a` and `b`. The factorization must be non-trivial, i.e. `a /= 1 && b /= 1`.
+
+You can produce a circom compatible `r1cs` file for this program by running 
 
 ```
-> cabal run factors
+> cabal run factors-cli -- compile --output-dir trusted-setup 
 ```
 
-You should see an artifact `trusted-setup/circuit.r1cs`.
+You should see the artifacts 
+
+```
+trusted-setup
+├── circuit.bin
+├── circuit.r1cs
+└ ...
+```
+
+The `circuit.r1cs` file is the R1CS that is expected by snarkjs for proving/verification key generation. The `circuit.bin` is the binary serialization of the constraints represented by the compiled circuit. This file is required in order to evaluate the circuit, i.e. generate a witness.
 
 ### A factors program constraint solver
 A constraint solver applied to the `factors` program. You can produce a circom compatible WASM binary for this solver by running
 
 ```
-> cd factors-solver
+> cd wasm-solver
 > ./build-wasm
 ```
 
@@ -68,10 +79,10 @@ You can comple the contracts, build the purescript ffi, and deploy this smart co
 ```
 
 ### A frontend application
-Assuming you have done the previous steps, copy the proving key to the `www` folder
+Assuming you have done the previous steps, copy the proving key and the compiled circuit to the `www` folder
 
 ```
-> cp trusted-setup/circuit_final.zkey www
+> cp trusted-setup/circuit_final.zkey trusted-setup/circuit.bin www
 ```
 
 You should see the `circuit.wasm` solver binary is already there. Assuming you have deployed the verifying contract, you can start the frontend:

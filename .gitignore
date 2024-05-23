@@ -2,6 +2,7 @@
 dist-newstyle
 www/circuit_final.zkey
 www/circuit.wasm
+www/circuit.bin
 output
 .spago
 .purs-repl
