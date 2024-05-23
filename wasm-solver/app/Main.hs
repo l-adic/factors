@@ -1,12 +1,11 @@
 module Main where
 
-import Data.Binary (encodeFile)
+import Data.Binary (decodeFile)
 import Circom.Solver qualified as Circom
 import Data.IORef (IORef, newIORef)
 import Protolude
 import System.IO.Unsafe (unsafePerformIO)
-import ZK.Factors (Fr, factors)
-import Circuit.Language
+import ZK.Factors (Fr)
 
 main :: IO ()
 main = mempty
@@ -18,9 +17,10 @@ stateRef = unsafePerformIO $ do
 {-# NOINLINE stateRef #-}
 
 env :: Circom.ProgramEnv Fr
-env = Circom.mkProgramEnv $ 
-  let BuilderState {bsVars, bsCircuit} = snd $ runCircuitBuilder factors
-  in Circom.mkCircomProgram bsVars bsCircuit
+env = unsafePerformIO $ do
+  p <- decodeFile "/circuit.bin"
+  pure $ Circom.mkProgramEnv p
+{-# NOINLINE env #-}
 
 foreign export ccall init :: Int -> IO ()
 
@@ -40,9 +40,7 @@ getVersion = Circom._getVersion env
 foreign export ccall getRawPrime :: IO ()
 
 getRawPrime :: IO ()
-getRawPrime = do 
-  encodeFile "/foo.bin" (1234 :: Int)
-  Circom._getRawPrime env stateRef
+getRawPrime = Circom._getRawPrime env stateRef
 
 foreign export ccall writeSharedRWMemory :: Int -> Word32 -> IO ()
 

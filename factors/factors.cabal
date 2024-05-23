@@ -35,7 +35,7 @@ library
   hs-source-dirs:   src
   default-language: GHC2021
 
-executable cli
+executable factors-cli
   import:           warnings, extensions, deps
   main-is:          Main.hs
   build-depends:
@@ -51,6 +51,7 @@ test-suite factors-test
   hs-source-dirs:   test
   main-is:          Main.hs
   build-depends:
+      binary
     , factors
     , hspec
     , QuickCheck

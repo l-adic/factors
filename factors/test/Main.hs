@@ -10,6 +10,7 @@ import R1CS (Witness (..))
 import Test.Hspec
 import Test.QuickCheck
 import ZK.Factors (Fr, factors)
+import Data.Binary (encode, decode)
 
 main :: IO ()
 main = hspec $ do
@@ -17,6 +18,10 @@ main = hspec $ do
       program = mkCircomProgram bsVars bsCircuit
       vars = cpVars program
   describe "Factors" $ do
+    it "can serialize/deserialize the program" $ do
+      let a = decode (encode program)
+      cpCircuit a `shouldBe` cpCircuit program
+      
     it "should accept valid factorizations" $
       property $
         \x y ->
