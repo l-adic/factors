@@ -10,11 +10,11 @@ import Protolude
 import R1CS (Witness (..))
 import Test.Hspec
 import Test.QuickCheck
-import ZK.Factors (Fr, factors)
+import ZK.Factors (factors)
 
 main :: IO ()
 main = hspec $ do
-  let BuilderState {bsVars, bsCircuit} = snd $ runCircuitBuilder (factors @Fr)
+  let BuilderState {bsVars, bsCircuit} = snd $ runCircuitBuilder (factors @BN128)
       program = mkCircomProgram bsVars bsCircuit
       vars = cpVars program
   describe "Factors" $ do
