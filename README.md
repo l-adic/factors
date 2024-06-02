@@ -2,7 +2,7 @@
 
 The hello world app of ZK: prove you know a factorization without revealing the factors. 
 
-This repo serves as a guide to show how to plug a ZK Haskell program into existing proving software. In this case we want to build a browser based proving application with an Ethereum smart contract verifier, and we will make use of the [snarkjs](https://github.com/iden3/snarkjs) proving library. There are similar integrations for [arkworks](https://github.com/arkworks-rs) and more to come.
+This repo serves as a guide to show how to plug a ZK Haskell program into existing proving software. In this case we want to build a browser based proving application with an Ethereum smart contract verifier, and we will make use of the [snarkjs](https://github.com/iden3/snarkjs) proving library. There are similar integrations for [arkworks](https://github.com/arkworks-rs), the [nova](https://github.com/microsoft/Nova) folding scheme and more to come.
 
 ## Setup
 
