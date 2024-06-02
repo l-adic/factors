@@ -26,14 +26,14 @@ main = hspec $ do
       property $
         \x y ->
           (x /= 1 && y /= 1) ==>
-            let inputs = Map.fromList [("n", x * y), ("a", x), ("b", y)]
+            let inputs = Map.fromList [("n", Simple $ x * y), ("a", Simple x), ("b", Simple y)]
                 Witness w =
                   witnessFromCircomWitness $
                     nativeGenWitness program inputs
              in lookupVar vars "out" w === Just 1
     it "shouldn't accept trivial factorizations" $
       property $ \x ->
-        let inputs = Map.fromList [("n", x), ("a", 1), ("b", x)]
+        let inputs = Map.fromList [("n", Simple x), ("a", Simple 1), ("b", Simple x)]
             Witness w =
               witnessFromCircomWitness $
                 nativeGenWitness program inputs
@@ -42,7 +42,7 @@ main = hspec $ do
       property $
         \x y z ->
           (x * y /= z) ==>
-            let inputs = Map.fromList [("n", z), ("a", x), ("b", y)]
+            let inputs = Map.fromList [("n", Simple z), ("a", Simple x), ("b", Simple y)]
                 Witness w =
                   witnessFromCircomWitness $
                     nativeGenWitness program inputs
