@@ -31,7 +31,7 @@ A ZK program written in a Haskell DSL that expresses a factorization of a public
 You can produce a circom compatible `r1cs` file for this program by running 
 
 ```
-> cabal run factors-cli -- compile --output-dir trusted-setup 
+> cabal run factors -- compile --r1cs trusted-setup/circuit.r1cs --constraints trusted-setup/circuit.bin
 ```
 
 You should see the artifacts 
