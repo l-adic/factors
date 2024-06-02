@@ -1,22 +1,22 @@
 module Main where
 
 import Circom.Solver qualified as Circom
+import Circuit (BN128)
 import Data.Binary (decodeFile)
 import Data.IORef (IORef, newIORef)
 import Protolude
 import System.IO.Unsafe (unsafePerformIO)
-import ZK.Factors (Fr)
 
 main :: IO ()
 main = mempty
 
-stateRef :: IORef (Circom.ProgramState Fr)
+stateRef :: IORef (Circom.ProgramState BN128)
 stateRef = unsafePerformIO $ do
   st <- Circom.mkProgramState env
   newIORef st
 {-# NOINLINE stateRef #-}
 
-env :: Circom.ProgramEnv Fr
+env :: Circom.ProgramEnv BN128
 env = unsafePerformIO $ do
   p <- decodeFile "/circuit.bin"
   pure $ Circom.mkProgramEnv p
