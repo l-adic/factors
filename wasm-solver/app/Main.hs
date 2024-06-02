@@ -1,7 +1,7 @@
 module Main where
 
-import Data.Binary (decodeFile)
 import Circom.Solver qualified as Circom
+import Data.Binary (decodeFile)
 import Data.IORef (IORef, newIORef)
 import Protolude
 import System.IO.Unsafe (unsafePerformIO)
@@ -70,7 +70,7 @@ getInputSize = Circom._getInputSize env
 foreign export ccall getInputSignalSize :: Word32 -> Word32 -> IO Int
 
 getInputSignalSize :: Word32 -> Word32 -> IO Int
-getInputSignalSize = Circom._getInputSignalSize
+getInputSignalSize = Circom._getInputSignalSize env
 
 foreign export ccall getWitnessSize :: Int
 
