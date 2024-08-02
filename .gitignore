@@ -16,5 +16,6 @@ build/
 trusted-setup/
 !trusted-setup/pot14_final.ptau
 src/Contracts
-contracts
+contracts/*.sol
+!contracts/
 circuit.dot

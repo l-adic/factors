@@ -88,7 +88,8 @@ Assuming you have done the previous steps, copy the proving key and the compiled
 You should see the `circuit.wasm` solver binary is already there. Assuming you have deployed the verifying contract, you can start the frontend:
 
 ```
-export VERIFIER_ADDRESS=$(jq -r '.networks."420123".address' build/contracts/Groth16Verifier.json) && npm run parcel
+> npm run build
+> export VERIFIER_ADDRESS=$(jq -r '.networks."420123".address' build/contracts/Groth16Verifier.json) && npm run parcel
 ```
 
 NOTE: I used cliquebaite to write this readme, which has networkId/chainId `420123`. If you have a different chainId, you will need to subsitute it in the above command or just find the address in the artifact manually.

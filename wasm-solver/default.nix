@@ -10,7 +10,7 @@ let
       defaultGHC.dev.hsPkgs.ghc-lib-parser.components.library.version;
   };
 
-  ghcWasmDeps = [ inputs.ghc-wasm-meta.packages.${system}.all_9_8 ];
+  ghcWasmDeps = [ inputs.ghc-wasm-meta.packages.${system}.all_9_6 ];
 
 in
 

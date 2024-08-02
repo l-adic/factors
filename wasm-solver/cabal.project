@@ -36,4 +36,9 @@ source-repository-package
   type: git
   location: https://github.com/l-adic/arithmetic-circuits.git
   tag: 7323152c3942c546d676ad6dcafe747f88d72663
-  --sha256: ldjPgZN7M+hsD6S7kx0QsVJsK8FbCl0d7oSyPHQRoaw=
+  --sha256: PGfFEU+1fciGXBPFYTbAjdBIFBd0Ss6fte1hMbfQtLo=
+
+index-state: 2024-03-06T13:35:48Z
+
+constraints:
+    finite-typelits ==0.1.6.0
